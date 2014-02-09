@@ -1,6 +1,7 @@
 package com.example.puzzlegame;
 
 import org.cocos2d.actions.instant.CCCallFuncN;
+import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.layers.CCLayer;
@@ -17,6 +18,7 @@ import org.cocos2d.types.CGRect;
 import org.cocos2d.types.CGSize;
 import org.cocos2d.types.ccColor3B;
 import org.cocos2d.utils.CCFormatter;
+ 
 
 import android.content.Context;
 import android.view.MotionEvent;
@@ -249,6 +251,43 @@ public class GameLayer extends CCLayer {
 
 	}
 
+
+	public void handleWin(Object sender){
+		if(checkCorrect()){
+			gameover = true ;
+
+			SoundEngine.sharedEngine().playEffect(appcontext, R.raw.tileclick);
+
+			//WinCallback(sender);
+		}
+	}
+	
+	//This method checks if the puzzle has been correctly solved.
+	public boolean checkCorrect(){
+		CCNode tileNode = (CCNode) getChildByTag(TILE_NODE_TAG);
+		int nodeindex = 1 ;
+		boolean result = false;
+
+		int rowindex = 0 ;
+		for (float j = toppoint ; j > toppoint - (TILE_SQUARE_SIZE * NUM_ROWS); j-= TILE_SQUARE_SIZE){
+			for (float i = topleft ; i < (topleft - 5) + (TILE_SQUARE_SIZE * NUM_COLUMNS); i+= TILE_SQUARE_SIZE){
+				if(tileNode.getChildByTag(nodeindex).getPosition().x == i && tileNode.getChildByTag(nodeindex).getPosition().y == j ){
+					result = true ; 
+				}else{ 
+					return false ;
+				}
+				nodeindex++ ;
+				if(nodeindex == (NUM_ROWS * NUM_COLUMNS)){
+					return result ;
+				}
+			}
+
+			 
+		}
+
+		rowindex = 0 ;
+		return result ;
+	}
 
 }
 
