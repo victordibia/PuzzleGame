@@ -3,11 +3,16 @@ package com.example.puzzlegame;
 import org.cocos2d.actions.instant.CCCallFuncN;
 import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
+import org.cocos2d.actions.interval.CCScaleBy;
 import org.cocos2d.actions.interval.CCSequence;
+import org.cocos2d.layers.CCColorLayer;
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
 import org.cocos2d.menus.CCMenu;
-import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.menus.CCMenuItem;
+import org.cocos2d.menus.CCMenuItemAtlasFont;
+import org.cocos2d.menus.CCMenuItemFont;
+import org.cocos2d.menus.CCMenuItemLabel;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCNode;
 import org.cocos2d.nodes.CCSprite;
@@ -17,8 +22,8 @@ import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.CGRect;
 import org.cocos2d.types.CGSize;
 import org.cocos2d.types.ccColor3B;
+import org.cocos2d.types.ccColor4B;
 import org.cocos2d.utils.CCFormatter;
- 
 
 import android.content.Context;
 import android.view.MotionEvent;
@@ -34,6 +39,7 @@ public class GameLayer extends CCLayer {
 	private static float TILE_SQUARE_SIZE = 0;
 	private static final int NUM_ROWS = 3;
 	private static final int NUM_COLUMNS = 3;
+	private static final int PAUSE_OVERLAY_TAG = 25;
 
 	private static CGSize screenSize;
 
@@ -254,11 +260,11 @@ public class GameLayer extends CCLayer {
 
 	public void handleWin(Object sender){
 		if(checkCorrect()){
-			gameover = true ;
+			//gameover = true ;
 
-			SoundEngine.sharedEngine().playEffect(appcontext, R.raw.tileclick);
+			SoundEngine.sharedEngine().playEffect(appcontext, R.raw.cheer);
 
-			//WinCallback(sender);
+			WinCallback(sender);
 		}
 	}
 	
@@ -267,8 +273,7 @@ public class GameLayer extends CCLayer {
 		CCNode tileNode = (CCNode) getChildByTag(TILE_NODE_TAG);
 		int nodeindex = 1 ;
 		boolean result = false;
-
-		int rowindex = 0 ;
+ 
 		for (float j = toppoint ; j > toppoint - (TILE_SQUARE_SIZE * NUM_ROWS); j-= TILE_SQUARE_SIZE){
 			for (float i = topleft ; i < (topleft - 5) + (TILE_SQUARE_SIZE * NUM_COLUMNS); i+= TILE_SQUARE_SIZE){
 				if(tileNode.getChildByTag(nodeindex).getPosition().x == i && tileNode.getChildByTag(nodeindex).getPosition().y == j ){
@@ -282,13 +287,84 @@ public class GameLayer extends CCLayer {
 				}
 			}
 
-			 
+			//rowindex++ ;
 		}
-
-		rowindex = 0 ;
+ 
 		return result ;
 	}
 
+	
+	public void WinCallback(Object sender) {
+		unschedule("updateTimeLabel"); // stop the timer
+
+		//Create a dark semi-transparent layer called pauseOverlay and add over our scene
+		CCColorLayer pauseOverlay = CCColorLayer.node(ccColor4B.ccc4(25, 25, 25, 255)); 
+		pauseOverlay.setOpacity(200);
+		pauseOverlay.setIsTouchEnabled(true); 
+		addChild(pauseOverlay,200,PAUSE_OVERLAY_TAG);
+		
+		//Show the number of moves in a label called movesLabel
+		CCBitmapFontAtlas gamemoves = CCBitmapFontAtlas.bitmapFontAtlas ( CCFormatter.format("%02d", moves ) + " Moves", "bionic.fnt");
+		gamemoves.setAnchorPoint(CGPoint.ccp(0,1)); 
+		gamemoves.setScale(generalscalefactor);
+		gamemoves.setAnchorPoint(0.5f,1f);
+
+		//Annimate the moves label a little .. scale it
+		gamemoves.setPosition(CGPoint.ccp(screenSize.width / 2.0f , screenSize.height/2.0f ));
+		pauseOverlay.addChild(gamemoves,300 );
+		gamemoves.runAction(CCSequence.actions(
+				CCDelayTime.action(0.5f),
+				CCScaleBy.action(0.2f, 2.0f)
+				));
+
+		//Some instruction for the user to procee
+		CCBitmapFontAtlas instructionFontAtlas = CCBitmapFontAtlas.bitmapFontAtlas( "TAP Back button below to continue!" , "bionic.fnt");
+		instructionFontAtlas.setPosition(gamemoves.getPosition().x, -instructionFontAtlas.getContentSize().height*0.6f*generalscalefactor) ;
+		instructionFontAtlas.setScale(0.6f*generalscalefactor) ;
+		pauseOverlay.addChild(instructionFontAtlas,301);
+
+		//animate the instruction label a little ... moveTo
+		instructionFontAtlas.runAction(CCSequence.actions(
+				CCDelayTime.action(0.5f), 
+				CCMoveTo.action(0.5f, CGPoint.make(gamemoves.getPosition().x, gamemoves.getPosition().y - 10*generalscalefactor - gamemoves.getContentSize().height *generalscalefactor * 2.0f)) 
+				));
+
+		//Show amount of time in a lable
+		CCBitmapFontAtlas gametime = CCBitmapFontAtlas.bitmapFontAtlas (CCFormatter.format("%02d:%02d", (int)(thetime /60) , (int)thetime % 60 ), "bionic.fnt");
+		gametime.setAnchorPoint(CGPoint.ccp(0,1)); 
+		gametime.setScale(generalscalefactor);
+		gametime.setAnchorPoint(0.5f,1f);
+		gametime.setPosition(CGPoint.ccp(screenSize.width / 2.0f , gamemoves.getPosition().y + gamemoves.getContentSize().height*generalscalefactor/2.0f + 10 ));
+		pauseOverlay.addChild(gametime,301);
+
+
+		//reset time to zero
+		
+		
+		 
+		 CCBitmapFontAtlas label = CCBitmapFontAtlas.bitmapFontAtlas("BACK", "bionic.fnt");
+		 CCMenuItemLabel item5 = CCMenuItemLabel.item(label, this, "backCallback");
+
+		  CCMenu resumemenu = CCMenu.menu(item5); 
+		resumemenu.setPosition(CGPoint.make(label.getContentSize().width, label.getContentSize().width));
+		pauseOverlay.addChild(resumemenu,800) ;
+
+	}
+	
+	public void backCallback(Object sender) {
+		schedule("updateTimeLabel"); //restart timer
+		moves = 0 ; //Reset moves
+		thetime = 0 ; //Reset time
+		
+		//Remove the pause layer and reload the scene
+		CCColorLayer pauselayer = (CCColorLayer) getChildByTag(PAUSE_OVERLAY_TAG) ;
+		pauselayer.runAction(CCMoveTo.action(0.2f, CGPoint.make(screenSize.width / 2.0f, screenSize.height + pauselayer.getContentSize().height*generalscalefactor)));
+
+		pauselayer.removeAllChildren(true);
+		pauselayer.removeSelf() ;
+		CCDirector.sharedDirector().replaceScene(GameLayer.scene());
+
+	}
 }
 
 
