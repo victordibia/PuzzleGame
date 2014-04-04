@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 		director.setDeviceOrientation(CCDirector.kCCDeviceOrientationLandscapeLeft);
 		CCDirector.sharedDirector().setAnimationInterval(1.0f / 60.0f);
 		CCDirector.sharedDirector().setDisplayFPS(true);
-		CCScene scene =  GameLayer.scene(); //  
+		CCScene scene =  MenuLayer.scene(); //  
 		CCDirector.sharedDirector().runWithScene(scene); 
 		
 	}
