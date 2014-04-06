@@ -1,5 +1,8 @@
 package com.example.puzzlegame;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.cocos2d.actions.instant.CCCallFuncN;
 import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
@@ -9,14 +12,13 @@ import org.cocos2d.layers.CCColorLayer;
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
 import org.cocos2d.menus.CCMenu;
-import org.cocos2d.menus.CCMenuItem;
-import org.cocos2d.menus.CCMenuItemAtlasFont;
-import org.cocos2d.menus.CCMenuItemFont;
 import org.cocos2d.menus.CCMenuItemLabel;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCNode;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.nodes.CCSpriteFrame;
 import org.cocos2d.opengl.CCBitmapFontAtlas;
+import org.cocos2d.opengl.CCTexture2D;
 import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.CGRect;
@@ -26,12 +28,15 @@ import org.cocos2d.types.ccColor4B;
 import org.cocos2d.utils.CCFormatter;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.MotionEvent;
 
 
 
 
-public class GameLayer extends CCLayer {
+public class PictureGameLayer extends CCLayer {
 	private static final int STATUS_LABEL_TAG = 20;
 	private static final int TIMER_LABEL_TAG = 21;
 	private static final int MOVES_LABEL_TAG = 22;
@@ -54,7 +59,7 @@ public class GameLayer extends CCLayer {
 	private Context appcontext;
 	public static boolean gameover = false ;
 
-	public GameLayer () {
+	public PictureGameLayer () {
 
 		this.setIsTouchEnabled(true);
 		//Add Background Sprite Image
@@ -99,6 +104,7 @@ public class GameLayer extends CCLayer {
 		CCMenu backemenu = CCMenu.menu(item5); 
 		backemenu.setPosition(CGPoint.make(screenSize.width - label.getContentSize().width, label.getContentSize().width));
 		addChild(backemenu, 300) ;
+
 	}
 
 	public void updateTimeLabel(float dt) {
@@ -112,7 +118,7 @@ public class GameLayer extends CCLayer {
 	public static CCScene scene()
 	{
 		CCScene scene = CCScene.node();
-		CCLayer layer = new GameLayer();
+		CCLayer layer = new PictureGameLayer();
 		scene.addChild(layer);
 		return scene;
 	}
@@ -156,6 +162,7 @@ public class GameLayer extends CCLayer {
 				nextval = tileNumbers[tileIndex ];
 				CCNodeExt eachNode =  new  CCNodeExt(); 
 				eachNode.setContentSize(tile.getContentSize());
+				eachNode.setScale(scalefactor);
 				//
 				//Layout Node based on calculated postion
 				eachNode.setPosition(i, j);
@@ -163,23 +170,69 @@ public class GameLayer extends CCLayer {
 
 				//Add Tile number
 				CCBitmapFontAtlas tileNumber = CCBitmapFontAtlas.bitmapFontAtlas ("00", "bionic.fnt");
-				tileNumber.setScale(1.4f);
-
-				eachNode.setScale(scalefactor);
-				eachNode.addChild(tile,1,1);
-				tileNumber.setString(nextval + ""); 
+				tileNumber.setScale(1.1f);
+				tileNumber.setString(nextval + "");  // add tile number to keep track of it
 				eachNode.addChild(tileNumber,2 );
 
 
+				 
 				if( nextval != 0){
 					tilesNode.addChild(eachNode,1,nextval);
 				}else {
 					emptyPosition = CGPoint.ccp(i, j);
 				}
- 
+
+				 
 				tileIndex++;
 			}
 		} 
+
+		//Add Picture Sprites as tile background 
+
+		CCNode tileNode = (CCNode) getChildByTag(TILE_NODE_TAG);
+		int nodeindex = 1 ;
+		boolean result = false;
+
+
+		CCTexture2D metexture = new CCTexture2D();
+		Bitmap mybit = null;
+		try {
+			mybit = getBitmapFromAsset("benin.jpg");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+
+		metexture.initWithImage(mybit);
+
+
+		int rowindex = 0 ;
+		for (float j = 0 ; j < NUM_ROWS ; j++){
+			for (float i = 0 ; i <NUM_COLUMNS; i++){
+
+				//Calculate the size of each tile by dividing the height and width of our image
+				// and returning the min value of both calculations
+				float theblock = Math.min( mybit.getHeight()/NUM_ROWS, mybit.getWidth()/NUM_COLUMNS) ;
+
+				//Create a new sprite using this dimension above and from a given portion of the image
+				CCSpriteFrame myframe = CCSpriteFrame.frame(metexture, CGRect.make(i*theblock, j*theblock, theblock, theblock), CGPoint.make(0, 0));
+				tile = CCSprite.sprite(myframe);
+				tile.setScale((TILE_SQUARE_SIZE/theblock) * (1.3f*scalefactor));
+
+				//Assign our newly created sprite background to a node created earlier.
+				tileNode.getChildByTag(nodeindex).addChild(tile,-1,1); 
+				tileNode.setContentSize(tile.getContentSize());
+
+				if(nodeindex == (NUM_ROWS * NUM_COLUMNS) - 1){
+					break ;
+				} 
+				nodeindex++ ;
+			}
+
+
+
+		}
+
 
 	}
 
@@ -368,15 +421,30 @@ public class GameLayer extends CCLayer {
 
 		pauselayer.removeAllChildren(true);
 		pauselayer.removeSelf() ;
-		CCDirector.sharedDirector().replaceScene(GameLayer.scene());
+		CCDirector.sharedDirector().replaceScene(PictureGameLayer.scene());
 
 	}
 
+	/**
+	 * Helper Functions
+	 * @throws IOException 
+	 */
+	private Bitmap getBitmapFromAsset(String strName) throws IOException
+	{
+		AssetManager assetManager = CCDirector.sharedDirector().getActivity().getAssets();
+
+		InputStream istr = assetManager.open(strName);
+		Bitmap bitmap = BitmapFactory.decodeStream(istr);
+
+		return bitmap;
+	}
 	public void menuCallback(Object sender) {
 
 		CCDirector.sharedDirector().replaceScene(MenuLayer.scene());
 
 	}
+
+
 }
 
 

@@ -89,7 +89,7 @@ public class MenuLayer extends CCLayer {
 	}
 
 	public void pictureCallback(Object sender) {
-		CCScene scene =  GameLayer.scene(); //  
+		CCScene scene =  PictureGameLayer.scene(); //  
 		CCDirector.sharedDirector().runWithScene(scene); 
 
 	}
