@@ -30,10 +30,11 @@ import android.view.WindowManager;
 public class MainActivity extends Activity {
 
 	public static MainActivity  app ;
-	private static final int REQUEST_CODE = 1;
+	public static final int CAMERA_REQUEST_CODE = 1;
+	public static final int GALLERY_REQUEST_CODE = 3;
 	public static Bitmap bitmap =  null ;
-    
-    
+
+
 
 	protected CCGLSurfaceView _glSurfaceView; 
 	@Override
@@ -60,7 +61,7 @@ public class MainActivity extends Activity {
 	public void onStart()
 	{
 		super.onStart();
-		
+
 
 	}
 	@Override
@@ -93,27 +94,42 @@ public class MainActivity extends Activity {
 
 		CCDirector.sharedDirector().end();
 	} 
-	
+
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
-            try {
-                // We need to recyle unused bitmaps
-                if (MainActivity.bitmap != null) {
-                	MainActivity.bitmap.recycle();
-                }
-                InputStream stream = getContentResolver().openInputStream(
-                        data.getData());
-                MainActivity.bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(stream));
-                stream.close();
-                //imageView.setImageBitmap(bitmap);
-                CCScene scene =  CameraPictureGameLayer.scene(); //  
-        		CCDirector.sharedDirector().runWithScene(scene); 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+			MainActivity.bitmap = (Bitmap) data.getExtras().get("data");
+			CCScene scene =  PictureGameLayer.scene(); //  
+			CCDirector.sharedDirector().runWithScene(scene);
+		}
+
+		// For Gallery 
+		if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+			// We need to recyle unused bitmaps
+			if (MainActivity.bitmap != null) {
+				MainActivity.bitmap.recycle();
+			}
+
+			try {
+				InputStream stream;
+				stream = getContentResolver().openInputStream(
+						data.getData());
+				MainActivity.bitmap = Bitmap.createBitmap(BitmapFactory.decodeStream(stream));
+				stream.close(); 
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+			CCScene scene =  PictureGameLayer.scene(); //  
+			CCDirector.sharedDirector().runWithScene(scene);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }
