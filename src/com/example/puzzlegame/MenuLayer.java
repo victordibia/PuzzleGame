@@ -1,3 +1,9 @@
+/**
+	 *  
+	 * Author:  Victor Dibia 
+	 * Date last modified: Feb 10, 2014
+	 * Sample Code for Learning Cocos2D for Android 
+	 */
 package com.example.puzzlegame;
 
 import org.cocos2d.actions.interval.CCDelayTime;
@@ -48,7 +54,7 @@ public class MenuLayer extends CCLayer {
 		addChild(resumemenu,800) ;
 
 		//Add Picture based menu button
-		CCMenuItemImage backbtn = CCMenuItemImage.item("picture.png", "picture.png",this, "pictureCallback");
+		CCMenuItemImage backbtn = CCMenuItemImage.item("picture2.png", "picture2.png",this, "pictureCallback");
 		backbtn.setScale(1.6f *generalscalefactor);
 
 		CCMenu backmenu = CCMenu.menu(backbtn); 
@@ -71,6 +77,13 @@ public class MenuLayer extends CCLayer {
 				CCDelayTime.action(0.4f), 
 				CCMoveTo.action(0.5f, CGPoint.make(screenSize.width / (2.0f*generalscalefactor) , screenSize.height/2*generalscalefactor + 60 *generalscalefactor )) 
 				));
+		//add a back button to main menu
+				CCBitmapFontAtlas menulabel = CCBitmapFontAtlas.bitmapFontAtlas("BACK", "bionic.fnt");
+				CCMenuItemLabel item5 = CCMenuItemLabel.item(menulabel, this, "menuCallback");
+
+				CCMenu backemenu = CCMenu.menu(item5); 
+				backemenu.setPosition(CGPoint.make(screenSize.width - label.getContentSize().width, label.getContentSize().width));
+				addChild(backemenu, 300) ;
 	}
 
 	public static CCScene scene()
@@ -91,6 +104,12 @@ public class MenuLayer extends CCLayer {
 	public void pictureCallback(Object sender) {
 		CCScene scene =  PictureGameLayer.scene(); //  
 		CCDirector.sharedDirector().runWithScene(scene); 
+
+	}
+	
+	public void menuCallback(Object sender) {
+
+		CCDirector.sharedDirector().replaceScene(SlidingMenuLayer.scene());
 
 	}
 }

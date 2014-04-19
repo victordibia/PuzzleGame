@@ -1,3 +1,9 @@
+/**
+	 *  
+	 * Author:  Victor Dibia 
+	 * Date last modified: Feb 10, 2014
+	 * Sample Code for Learning Cocos2D for Android 
+	 */
 package com.example.puzzlegame;
 
 import org.cocos2d.actions.instant.CCCallFuncN;
@@ -9,9 +15,6 @@ import org.cocos2d.layers.CCColorLayer;
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
 import org.cocos2d.menus.CCMenu;
-import org.cocos2d.menus.CCMenuItem;
-import org.cocos2d.menus.CCMenuItemAtlasFont;
-import org.cocos2d.menus.CCMenuItemFont;
 import org.cocos2d.menus.CCMenuItemLabel;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCNode;
@@ -42,6 +45,7 @@ public class GameLayer extends CCLayer {
 	private static final int PAUSE_OVERLAY_TAG = 25;
 
 	private static CGSize screenSize;
+	
 
 	private static int thetime = 0 ;
 	private int toppoint = 0 ;
@@ -374,7 +378,7 @@ public class GameLayer extends CCLayer {
 
 	public void menuCallback(Object sender) {
 
-		CCDirector.sharedDirector().replaceScene(MenuLayer.scene());
+		CCDirector.sharedDirector().replaceScene(SlidingMenuLayer.scene());
 
 	}
 }

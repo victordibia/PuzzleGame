@@ -1,3 +1,9 @@
+/**
+	 *  
+	 * Author:  Victor Dibia 
+	 * Date last modified: Feb 10, 2014
+	 * Sample Code for Learning Cocos2D for Android 
+	 */
 package com.example.puzzlegame;
 
 import java.io.IOException;
@@ -228,9 +234,6 @@ public class PictureGameLayer extends CCLayer {
 				} 
 				nodeindex++ ;
 			}
-
-
-
 		}
 
 
@@ -440,7 +443,7 @@ public class PictureGameLayer extends CCLayer {
 	}
 	public void menuCallback(Object sender) {
 
-		CCDirector.sharedDirector().replaceScene(MenuLayer.scene());
+		CCDirector.sharedDirector().replaceScene(SlidingMenuLayer.scene());
 
 	}
 

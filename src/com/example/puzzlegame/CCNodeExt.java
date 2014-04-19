@@ -1,7 +1,7 @@
 /**
 	 *  
 	 * Author:  Victor Dibia 
-	 * Date last modified: Feb 10, 2012
+	 * Date last modified: Feb 10, 2014
 	 * Model tiles with extra field NodeText 
 	 */
 
