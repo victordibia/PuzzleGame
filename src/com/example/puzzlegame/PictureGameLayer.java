@@ -1,9 +1,9 @@
 /**
-	 *  
-	 * Author:  Victor Dibia 
-	 * Date last modified: Feb 10, 2014
-	 * Sample Code for Learning Cocos2D for Android 
-	 */
+ *  
+ * Author:  Victor Dibia 
+ * Date last modified: Feb 10, 2014
+ * Sample Code for Learning Cocos2D for Android 
+ */
 package com.example.puzzlegame;
 
 import java.io.IOException;
@@ -34,6 +34,7 @@ import org.cocos2d.types.ccColor4B;
 import org.cocos2d.utils.CCFormatter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -181,14 +182,14 @@ public class PictureGameLayer extends CCLayer {
 				eachNode.addChild(tileNumber,2 );
 
 
-				 
+
 				if( nextval != 0){
 					tilesNode.addChild(eachNode,1,nextval);
 				}else {
 					emptyPosition = CGPoint.ccp(i, j);
 				}
 
-				 
+
 				tileIndex++;
 			}
 		} 
@@ -197,22 +198,13 @@ public class PictureGameLayer extends CCLayer {
 
 		CCNode tileNode = (CCNode) getChildByTag(TILE_NODE_TAG);
 		int nodeindex = 1 ;
-		boolean result = false;
-
-
 		CCTexture2D metexture = new CCTexture2D();
 		Bitmap mybit = null;
-		try {
-			mybit = getBitmapFromAsset("benin.jpg");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+		mybit = MainActivity.bitmap; 
 
 		metexture.initWithImage(mybit);
 
 
-		int rowindex = 0 ;
 		for (float j = 0 ; j < NUM_ROWS ; j++){
 			for (float i = 0 ; i <NUM_COLUMNS; i++){
 
@@ -428,18 +420,31 @@ public class PictureGameLayer extends CCLayer {
 
 	}
 
-	/**
-	 * Helper Functions
-	 * @throws IOException 
-	 */
-	private Bitmap getBitmapFromAsset(String strName) throws IOException
+	public static void getBitMapfromCamera() {
+
+		// for camera intent use  
+		Intent intent = new Intent( android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
+		intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP) ; 
+		MainActivity.app.startActivityForResult(intent,MainActivity.CAMERA_REQUEST_CODE);	 
+
+	}
+
+	public static void getBitMapFromGallery() {
+
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
+		intent.setType("image/*"); 
+		intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP) ;
+		intent.addCategory(Intent.CATEGORY_OPENABLE);	       
+		MainActivity.app.startActivityForResult(intent,MainActivity.GALLERY_REQUEST_CODE); 
+	}
+	public static void getBitmapFromAsset(String strName) throws IOException
 	{
 		AssetManager assetManager = CCDirector.sharedDirector().getActivity().getAssets();
 
 		InputStream istr = assetManager.open(strName);
 		Bitmap bitmap = BitmapFactory.decodeStream(istr);
 
-		return bitmap;
+		MainActivity.bitmap =  bitmap;
 	}
 	public void menuCallback(Object sender) {
 

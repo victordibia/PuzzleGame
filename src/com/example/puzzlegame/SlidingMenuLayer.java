@@ -6,6 +6,8 @@
  */
 package com.example.puzzlegame;
 
+import java.io.IOException;
+
 import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCSequence;
@@ -65,7 +67,7 @@ public class SlidingMenuLayer extends CCLayer {
 				));
 
 		// Create our menu ttitles
-		String[] menutitles = {"number puzzle", "picture puzzle", "camera puzzle" , "fixed menu"  } ;
+		String[] menutitles = {"number puzzle", "picture puzzle", "camera puzzle" , "gallery puzzle" , "fixed menu"  } ;
 
 		scrollView = CCScrollView.view(CGSize.zero()); 
 		scrollView.bounces = true ;
@@ -123,15 +125,22 @@ public class SlidingMenuLayer extends CCLayer {
 			CCScene scene =  GameLayer.scene(); //  
 			CCDirector.sharedDirector().runWithScene(scene); 
 		}else if (i == 1){
+			try {
+				PictureGameLayer.getBitmapFromAsset("benin.jpg");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			CCScene scene =  PictureGameLayer.scene(); //  
 			CCDirector.sharedDirector().runWithScene(scene); 
 		}
 		else if (i == 2){
-			CameraPictureGameLayer.getBitMapfromCamera();
-			//CCScene scene =  CameraPictureGameLayer.scene(); //  
-			//CCDirector.sharedDirector().runWithScene(scene); 
+			PictureGameLayer.getBitMapfromCamera(); 
 		}
 		else if (i == 3){
+			PictureGameLayer.getBitMapFromGallery();; 
+		}
+		else if (i == 4){
 			CCScene scene =  MenuLayer.scene(); //  
 			CCDirector.sharedDirector().runWithScene(scene); 
 		}
