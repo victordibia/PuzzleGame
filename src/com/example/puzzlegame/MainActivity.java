@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// For Handling Camera  Intent  
 		if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
 			MainActivity.bitmap = (Bitmap) data.getExtras().get("data");
@@ -104,7 +105,7 @@ public class MainActivity extends Activity {
 			CCDirector.sharedDirector().runWithScene(scene);
 		}
 
-		// For Gallery 
+		// For Handling Picture Gallery Intent  
 		if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 			// We need to recyle unused bitmaps
 			if (MainActivity.bitmap != null) {
