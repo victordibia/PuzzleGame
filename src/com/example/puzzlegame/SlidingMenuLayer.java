@@ -36,7 +36,7 @@ public class SlidingMenuLayer extends CCLayer {
 	float tilescale ;
 
 	float generalscalefactor = 0.0f ;
-	public static boolean gameover = false ;
+
 
 	public SlidingMenuLayer () {
 
@@ -54,7 +54,7 @@ public class SlidingMenuLayer extends CCLayer {
 		background.setPosition(CGPoint.ccp(0, screenSize.height));
 		addChild(background,-5);
 
-		//Some instruction for the user to procee
+		//Some instruction for the user to process
 		CCBitmapFontAtlas instructionFontAtlas = CCBitmapFontAtlas.bitmapFontAtlas( "Select an option" , "bionic.fnt");
 		instructionFontAtlas.setPosition(screenSize.width / (2.0f*generalscalefactor) , screenSize.height) ;
 		instructionFontAtlas.setScale(0.8f*generalscalefactor) ;
@@ -67,31 +67,31 @@ public class SlidingMenuLayer extends CCLayer {
 				));
 
 		// Create our menu ttitles
-		String[] menutitles = {"number puzzle", "picture puzzle", "camera puzzle" , "gallery puzzle" , "fixed menu"  } ;
 
 		scrollView = CCScrollView.view(CGSize.zero()); 
-		scrollView.bounces = true ;
-		scrollView.setClipToBounds( true) ;
-		scrollView.direction =1 ; 
+		scrollView.bounces = true ;  //the bounce effect when a user scrolls to the end
+		scrollView.setClipToBounds( true) ;  // 
+		scrollView.direction =1 ;   // for horizontal scrolling.
 		addChild(scrollView,218, SCROLLVIEW_TAG); 
 
+		String[] menutitles = {"number puzzle", "picture puzzle", "camera puzzle" , "gallery puzzle" , "fixed menu"  } ;
 		CCSprite tilebox = CCSprite.sprite("picture.png");	;
 		float newwidth = tilebox.getContentSize().width * 1.5f * generalscalefactor ; 
 		tilescale = 1.5f * generalscalefactor ;
 
 		for (int i=0 ; i < menutitles.length ; i++){
-
-
+			//A meu image sprite
 			tilebox = CCSprite.sprite("picture.png");				
 			tilebox.setAnchorPoint(0.5f, 0.5f);
 			tilebox.setScale(tilescale);
+			// Each one is placed with a 30 pixel space from the next ... i *30*generalscalefactor.
 			tilebox.setPosition(CGPoint.ccp((i*newwidth) + 30*generalscalefactor + i*30*generalscalefactor , screenSize.height/2 - ((tilebox.getContentSize().height *tilescale)/2.0f) ));
 
+
+			//a text title added below each menu image with same x cordinates
 			CCBitmapFontAtlas nlabel = CCBitmapFontAtlas.bitmapFontAtlas(menutitles[i], "bionic.fnt");
 			nlabel.setScale(0.8f * generalscalefactor);
 			nlabel.setPosition(CGPoint.ccp((i*newwidth) + 30*generalscalefactor + i*30*generalscalefactor , tilebox.getPosition().y - ((tilebox.getContentSize().height *tilescale)/2.0f) + 10*generalscalefactor));
-
-
 			scrollView.addChild(tilebox,1,i);
 			scrollView.addChild(nlabel);
 		}
@@ -99,7 +99,7 @@ public class SlidingMenuLayer extends CCLayer {
 
 
 		// You need to set contentSize to enable scrolling.
-		
+
 		// The scrollview is like a sliding window that shows portions of a long list
 		//View Size is the size of the window and Content size is the size of the entire long list
 		// For scrolling to occur, the content lenght must be greater than the viewsize
@@ -120,6 +120,7 @@ public class SlidingMenuLayer extends CCLayer {
 		return scene;
 	}
 
+	//Controls the events launched when a menu item is clicked
 	private void launchmenu( int i){
 		if (i == 0){
 			CCScene scene =  GameLayer.scene(); //  
@@ -169,12 +170,19 @@ public class SlidingMenuLayer extends CCLayer {
 			//Obtain a reference to the scrollview control
 			CCScrollView tilesNode = (CCScrollView)getChildByTag(SCROLLVIEW_TAG) ;
 
-			//Get scrollview children
+			//Get scrollview children .. its inside container variable
 			CCClipNode container = (CCClipNode)(tilesNode.getChildren().get(0)) ;  
 
 			//Iterate through its children ... nlabel and tilebox sprite			
+			// we divide by two here because we have two items added for each menu item
 			for (int i = 0 ; i < ((container.getChildren().size())/2)  ; i++){ 
 
+				// In order to get the position of the item menu that has been touched we note the following
+				// We need the current position of the touch event ... which is endlocation .. check
+				// We need to know where it falls into the scrollview content
+				// Since we are scrolling horizontally we add the content current x position to our touch x position
+				//and construct a rectangle in that area . 
+				// You can inspect these values in logcat (x, y, endlocation ) using  ccMacros.CCLOG.
 				CCSprite backsprite = (CCSprite)container.getChildByTag(i);
 				spritePos = CGRect.make(
 						(backsprite.getPosition().x + container.getPosition().x ) ,
