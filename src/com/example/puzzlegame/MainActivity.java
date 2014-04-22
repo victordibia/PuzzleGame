@@ -33,10 +33,9 @@ public class MainActivity extends Activity {
 	public static final int CAMERA_REQUEST_CODE = 1;
 	public static final int GALLERY_REQUEST_CODE = 3;
 	public static Bitmap bitmap =  null ;
-
-
-
 	protected CCGLSurfaceView _glSurfaceView; 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -53,17 +52,18 @@ public class MainActivity extends Activity {
 		director.setDeviceOrientation(CCDirector.kCCDeviceOrientationLandscapeLeft);
 		CCDirector.sharedDirector().setAnimationInterval(1.0f / 60.0f);
 		CCDirector.sharedDirector().setDisplayFPS(true);
+		
 		CCScene scene =  SlidingMenuLayer.scene(); //  
 		CCDirector.sharedDirector().runWithScene(scene); 
 
 	}
+	
 	@Override
 	public void onStart()
 	{
 		super.onStart();
-
-
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -75,7 +75,6 @@ public class MainActivity extends Activity {
 	public void onPause()
 	{
 		super.onPause();
-
 		CCDirector.sharedDirector().pause();
 	}
 
@@ -83,7 +82,6 @@ public class MainActivity extends Activity {
 	public void onResume()
 	{
 		super.onResume();
-
 		CCDirector.sharedDirector().resume();
 	}
 
@@ -91,7 +89,6 @@ public class MainActivity extends Activity {
 	public void onStop()
 	{
 		super.onStop();
-
 		CCDirector.sharedDirector().end();
 	} 
 
