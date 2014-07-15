@@ -14,6 +14,7 @@ import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCScaleBy;
 import org.cocos2d.actions.interval.CCSequence;
+import org.cocos2d.config.ccMacros;
 import org.cocos2d.layers.CCColorLayer;
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
@@ -87,7 +88,7 @@ public class PictureGameLayer extends CCLayer {
 
 		// Add Timer Label to track time
 		CCBitmapFontAtlas timerLabel = CCBitmapFontAtlas.bitmapFontAtlas ("00:00", "bionic.fnt");
-		timerLabel.setScale(1.5f);
+		timerLabel.setScale(1.5f*generalscalefactor);
 		timerLabel.setAnchorPoint(1f,1f);
 		timerLabel.setColor(ccColor3B.ccc3(50, 205, 50));
 		timerLabel.setPosition(CGPoint.ccp(screenSize.width - 25*generalscalefactor , screenSize.height - 10*generalscalefactor ));
@@ -95,7 +96,7 @@ public class PictureGameLayer extends CCLayer {
 
 		// Add Moves Label to track number of moves
 		CCBitmapFontAtlas movesLabel = CCBitmapFontAtlas.bitmapFontAtlas ("Moves : 000", "bionic.fnt");
-		movesLabel.setScale(0.8f);
+		movesLabel.setScale(0.8f*generalscalefactor);
 		movesLabel.setAnchorPoint(1f,0f);
 		movesLabel.setColor(ccColor3B.ccc3(50, 205, 50)); 
 		movesLabel.setPosition(CGPoint.ccp(screenSize.width - 25*generalscalefactor, timerLabel.getPosition().y - timerLabel.getContentSize().height*generalscalefactor - 10*generalscalefactor -  timerLabel.getContentSize().height*generalscalefactor));
@@ -107,9 +108,10 @@ public class PictureGameLayer extends CCLayer {
 		//add a back button to main menu
 		CCBitmapFontAtlas label = CCBitmapFontAtlas.bitmapFontAtlas("BACK", "bionic.fnt");
 		CCMenuItemLabel item5 = CCMenuItemLabel.item(label, this, "menuCallback");
-
+		item5.setScale(1.5f *generalscalefactor);
 		CCMenu backemenu = CCMenu.menu(item5); 
-		backemenu.setPosition(CGPoint.make(screenSize.width - label.getContentSize().width, label.getContentSize().width));
+		backemenu.setPosition(CGPoint.make(screenSize.width - item5.getContentSize().width * 1.5f *generalscalefactor , item5.getContentSize().height * 1.5f *generalscalefactor));
+		
 		addChild(backemenu, 300) ;
 
 	}
@@ -151,11 +153,14 @@ public class PictureGameLayer extends CCLayer {
 		useableheight =  (int) (screenSize.height  - 40*generalscalefactor - statusLabel.getContentSize().height * 1.3f*generalscalefactor) ;
 
 		TILE_SQUARE_SIZE = (int) Math.min((useableheight/NUM_ROWS) , (useablewidth/NUM_COLUMNS)) ;
+		
+		ccMacros.CCLOG("Began", " Scale Fact " + generalscalefactor + " :  "  );
 
+		
 		toppoint = (int) (useableheight  - (TILE_SQUARE_SIZE / 2) + 30*generalscalefactor)   ;
-		scalefactor = TILE_SQUARE_SIZE / 150.0f ;
+		scalefactor = TILE_SQUARE_SIZE / (150.0f*generalscalefactor) ;
 
-		topleft = (int) ((TILE_SQUARE_SIZE / 2) + 15*generalscalefactor) ;
+		topleft = (int) ((TILE_SQUARE_SIZE / 2*generalscalefactor) + 15*generalscalefactor) ;
 
 		CCSprite tile = CCSprite.sprite("tile.png");
 		//CCSprite tilebox = CCSprite.sprite("tilebox.png");
@@ -177,7 +182,7 @@ public class PictureGameLayer extends CCLayer {
 
 				//Add Tile number
 				CCBitmapFontAtlas tileNumber = CCBitmapFontAtlas.bitmapFontAtlas ("00", "bionic.fnt");
-				tileNumber.setScale(1.1f);
+				tileNumber.setScale(2.0f * scalefactor);
 				tileNumber.setString(nextval + "");  // add tile number to keep track of it
 				eachNode.addChild(tileNumber,2 );
 
@@ -218,7 +223,7 @@ public class PictureGameLayer extends CCLayer {
 				tile.setScale((TILE_SQUARE_SIZE/theblock) * (1.3f*scalefactor));
 
 				//Assign our newly created sprite background to a node created earlier.
-				tileNode.getChildByTag(nodeindex).addChild(tile,-1,1); 
+				//tileNode.getChildByTag(nodeindex).addChild(tile,-1,1); 
 				tileNode.setContentSize(tile.getContentSize());
 
 				if(nodeindex == (NUM_ROWS * NUM_COLUMNS) - 1){
