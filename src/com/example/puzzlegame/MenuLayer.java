@@ -82,7 +82,7 @@ public class MenuLayer extends CCLayer {
 				CCMenuItemLabel item5 = CCMenuItemLabel.item(menulabel, this, "menuCallback");
 
 				CCMenu backemenu = CCMenu.menu(item5); 
-				backemenu.setPosition(CGPoint.make(screenSize.width - label.getContentSize().width, label.getContentSize().width));
+				backemenu.setPosition(CGPoint.make(screenSize.width - label.getContentSize().width * 1.4f *generalscalefactor, label.getContentSize().width *1.4f *generalscalefactor));
 				addChild(backemenu, 300) ;
 	}
 

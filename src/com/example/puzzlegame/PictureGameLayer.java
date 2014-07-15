@@ -160,7 +160,7 @@ public class PictureGameLayer extends CCLayer {
 		toppoint = (int) (useableheight  - (TILE_SQUARE_SIZE / 2) + 30*generalscalefactor)   ;
 		scalefactor = TILE_SQUARE_SIZE / (150.0f*generalscalefactor) ;
 
-		topleft = (int) ((TILE_SQUARE_SIZE / 2*generalscalefactor) + 15*generalscalefactor) ;
+		topleft = (int) ((TILE_SQUARE_SIZE / 2*scalefactor) + 30*generalscalefactor) ;
 
 		CCSprite tile = CCSprite.sprite("tile.png");
 		//CCSprite tilebox = CCSprite.sprite("tilebox.png");
@@ -220,10 +220,10 @@ public class PictureGameLayer extends CCLayer {
 				//Create a new sprite using this dimension above and from a given portion of the image
 				CCSpriteFrame myframe = CCSpriteFrame.frame(metexture, CGRect.make(i*theblock, j*theblock, theblock, theblock), CGPoint.make(0, 0));
 				tile = CCSprite.sprite(myframe);
-				tile.setScale((TILE_SQUARE_SIZE/theblock) * (1.3f*scalefactor));
+				tile.setScale((TILE_SQUARE_SIZE/theblock) * (1.2f*scalefactor));
 
 				//Assign our newly created sprite background to a node created earlier.
-				//tileNode.getChildByTag(nodeindex).addChild(tile,-1,1); 
+				tileNode.getChildByTag(nodeindex).addChild(tile,-1,1); 
 				tileNode.setContentSize(tile.getContentSize());
 
 				if(nodeindex == (NUM_ROWS * NUM_COLUMNS) - 1){
