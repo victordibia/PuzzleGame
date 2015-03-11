@@ -1,6 +1,6 @@
 PuzzleGame
 ==========
-
+![alt tag](http://denvycom.com/blog/wp-content/uploads/2014/04/Screenshot_2014-04-21-01-49-34-e1398016504406.png)
 Cocos2D for android project implementing a slider puzzle game.
 The Original cocos2d for Android Project can be found on git here : https://github.com/ZhouWeikuan/cocos2d
 
